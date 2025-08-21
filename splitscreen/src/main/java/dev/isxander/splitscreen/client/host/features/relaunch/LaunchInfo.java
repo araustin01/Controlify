@@ -36,7 +36,17 @@ public record LaunchInfo(
     }
 
     public String buildArgfile() {
-        return String.join("\n", buildCommand(false));
+        // Quote JVM args and classpath for argfile usage to preserve spaces on Windows.
+        List<String> lines = new ArrayList<>();
+        for (String jvmArg : jvmArgs) {
+            lines.add(RelaunchUtil.quoteArg(jvmArg));
+        }
+        lines.add("-cp");
+        lines.add(RelaunchUtil.quoteArg(classpath));
+        lines.add(mainClass);
+        // gameArgs are already quoted at source (Fabric/Prism/Hacky relaunchers)
+        lines.addAll(gameArgs);
+        return String.join("\n", lines);
     }
 
     public ProcessBuilder buildProcess() {

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "id": "controlify",
+  "version": "2.1.1+1.21.5-fabric",
+  "name": "Controlify",
+  "description": "The most advanced controller mod for Minecraft.",
+  "authors": [
+    "isXander"
+  ],
+  "contact": {
+    "homepage": "https://isxander.dev",
+    "issues": "https://github.com/isXander/Controlify/issues",
+    "sources": "https://github.com/isXander/Controlify"
+  },
+  "license": "LGPL-3.0-or-later",
+  "environment": "*",
+  "entrypoints": {
+    "modmenu": [
+      "dev.isxander.controlify.config.ModMenuIntegration"
+    ],
+    "main": [
+      "dev.isxander.controlify.ControlifyBootstrap"
+    ],
+    "client": [
+      "dev.isxander.controlify.ControlifyBootstrap"
+    ],
+    "server": [
+      "dev.isxander.controlify.ControlifyBootstrap"
+    ]
+  },
+  "accessWidener": "controlify.accesswidener",
+  "icon": "icon.png",
+  "depends": {
+    "fabricloader": "\u003e\u003d0.15.0",
+    "minecraft": "1.21.5",
+    "java": "\u003e\u003d17",
+    "yet_another_config_lib_v3": "\u003e\u003d3.6.0",
+    "fabric-api": "\u003e\u003d0.125.0+1.21.5"
+  },
+  "suggests": {
+    "immediatelyfast": "*"
+  },
+  "breaks": {
+    "midnightcontrols": "*",
+    "controllable": "*",
+    "zoomify": "\u003c\u003d2.13.4",
+    "do_a_barrel_roll": "\u003c\u003d3.5.8"
+  },
+  "mixins": [
+    {
+      "config": "controlify.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.iris.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.reeses-sodium-options.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.simple-voice-chat.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.sodium.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.yacl.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-platform.fabric.mixins.json",
+      "environment": "*"
+    }
+  ],
+  "jars": [
+    {
+      "file": "META-INF/jars/hid4java-0.8.0.jar"
+    },
+    {
+      "file": "META-INF/jars/libsdl4j-3.1.9.075c033-66.jar"
+    },
+    {
+      "file": "META-INF/jars/mixinextras-fabric-0.5.0-rc.2.jar"
+    },
+    {
+      "file": "META-INF/jars/steamdeck4j-1.1.7.jar"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+package dev.isxander.controlify.controller.info;
+
+import dev.isxander.controlify.controller.SingleValueComponent;
+import dev.isxander.controlify.utils.CUtil;
+import net.minecraft.class_2960;
+
+public class DriverNameComponent extends SingleValueComponent<String> {
+   public static final class_2960 ID = CUtil.rl("driver_name");
+
+   public DriverNameComponent(String value) {
+      super(value, ID);
+   }
+}
