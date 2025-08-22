@@ -13,8 +13,9 @@ import java.util.function.Consumer;
 
 public class SplitscreenLoadingOverlay extends Overlay {
 
-    private static final int BACKGROUND_COLOUR = ARGB.color(250, 254, 140);
-    private static final int FOREGROUND_COLOUR = ARGB.color(35, 35, 35);
+    private static final int BACKGROUND_COLOUR = ARGB.color(180, 20, 20, 20); // Dark semi-transparent background
+    private static final int FOREGROUND_COLOUR = ARGB.color(255, 255, 255); // White text for better contrast
+    private static final int PROGRESS_BAR_COLOR = ARGB.color(255, 100, 150, 255); // Nice blue progress bar
     private static final long FADE_OUT_TIME = 1000L;
     private static final long FADE_IN_TIME = 500L;
 
@@ -54,36 +55,44 @@ public class SplitscreenLoadingOverlay extends Overlay {
 
         float logoFade;
         if (fadeOutProgress >= 1.0F) {
-            this.renderScreen(guiGraphics, partialTick);
+            this.renderBlurredScreen(guiGraphics, partialTick);
 
             logoFade = 1 - Mth.clamp(fadeOutProgress - 1, 0, 1);
-            int opacity = Mth.ceil(logoFade * 255);
-            guiGraphics.fill(RenderType.guiOverlay(), 0, 0, width, height, ARGB.color(opacity, BACKGROUND_COLOUR));
+            int opacity = Mth.ceil(logoFade * 180); // Reduced opacity for the dark background
+            guiGraphics.fill(RenderType.guiOverlay(), 0, 0, width, height, ARGB.color(opacity, 20, 20, 20));
         } else if (this.fadeIn) {
-            this.renderScreen(guiGraphics, partialTick);
+            this.renderBlurredScreen(guiGraphics, partialTick);
 
-            int alpha = Mth.ceil(Mth.clamp(fadeInProgress, 0.15, 1.0) * 255);
-            guiGraphics.fill(RenderType.guiOverlay(), 0, 0, width, height, ARGB.color(alpha, BACKGROUND_COLOUR));
+            int alpha = Mth.ceil(Mth.clamp(fadeInProgress, 0.15, 1.0) * 180);
+            guiGraphics.fill(RenderType.guiOverlay(), 0, 0, width, height, ARGB.color(alpha, 20, 20, 20));
             logoFade = Mth.clamp(fadeInProgress, 0, 1);
         } else {
-            int backgroundColor = BACKGROUND_COLOUR;
-            guiGraphics.fill(RenderType.guiOverlay(), 0, 0, width, height, backgroundColor);
+            this.renderBlurredScreen(guiGraphics, partialTick);
+            guiGraphics.fill(RenderType.guiOverlay(), 0, 0, width, height, BACKGROUND_COLOUR);
             logoFade = 1;
         }
 
         int centerX = width / 2;
         int centerY = height / 2;
-        double d = Math.min(width * 0.75, height) * 0.25;
-        double barWidth = d * 4;
-        int halfBarWidth = (int) (barWidth / 2);
-        int barY = (int) (height * 0.8325f);
 
-        guiGraphics.drawString(this.minecraft.font, "Loading Splitscreen", centerX, centerY - 10, FOREGROUND_COLOUR, false);
+        // Center the text properly by getting its width and offsetting by half
+        String loadingText = "Loading Splitscreen...";
+        int textWidth = this.minecraft.font.width(loadingText);
+        int textX = centerX - textWidth / 2;
+        int textY = centerY - 30;
+
+        // Draw text with shadow for better visibility
+        guiGraphics.drawString(this.minecraft.font, loadingText, textX, textY, FOREGROUND_COLOUR, true);
+
+        // Position progress bar nicely below the text
+        double barWidth = Math.min(width * 0.4, 300); // Reasonable max width
+        int halfBarWidth = (int) (barWidth / 2);
+        int barY = textY + 40;
 
         float progress = this.status.getActualProgress();
         this.progress = Mth.clamp(this.progress * 0.95f + progress * 0.05f, 0, 1);
         if (fadeOutProgress < 1f) {
-            this.drawProgressBar(guiGraphics, centerX - halfBarWidth, barY - 5, centerX + halfBarWidth, barY + 5, 1 - Mth.clamp(fadeOutProgress, 0, 1));
+            this.drawProgressBar(guiGraphics, centerX - halfBarWidth, barY - 3, centerX + halfBarWidth, barY + 3, 1 - Mth.clamp(fadeOutProgress, 0, 1));
         }
         if (fadeOutProgress >= 2f) {
             this.minecraft.setOverlay(null);
@@ -106,21 +115,38 @@ public class SplitscreenLoadingOverlay extends Overlay {
         guiGraphics.pose().popPose();
     }
 
-    private void renderScreen(GuiGraphics guiGraphics, float partialTick) {
+    private void renderBlurredScreen(GuiGraphics guiGraphics, float partialTick) {
         if (this.minecraft.screen != null) {
+            // Render the screen behind with reduced brightness to simulate blur effect
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, -100); // Push it back
             this.minecraft.screen.render(guiGraphics, 0, 0, partialTick);
+            guiGraphics.pose().popPose();
+
+            // Add a subtle darkening overlay to enhance the blur effect
+            guiGraphics.fill(RenderType.guiOverlay(), 0, 0, guiGraphics.guiWidth(), guiGraphics.guiHeight(),
+                ARGB.color(120, 0, 0, 0));
         }
     }
 
     private void drawProgressBar(GuiGraphics guiGraphics, int minX, int minY, int maxX, int maxY, float partialTick) {
-        int i = Mth.ceil((maxX - minX - 2) * this.progress);
-        int j = Math.round(partialTick * 255.0F);
-        int k = ARGB.color(j, FOREGROUND_COLOUR);
-        guiGraphics.fill(minX + 2, minY + 2, minX + i, maxY - 2, k);
-        guiGraphics.fill(minX + 1, minY, maxX - 1, minY + 1, k);
-        guiGraphics.fill(minX + 1, maxY, maxX - 1, maxY - 1, k);
-        guiGraphics.fill(minX, minY, minX + 1, maxY, k);
-        guiGraphics.fill(maxX, minY, maxX - 1, maxY, k);
+        int progressWidth = Mth.ceil((maxX - minX - 4) * this.progress);
+        int alpha = Math.round(partialTick * 255.0F);
+
+        // Draw background of progress bar
+        int backgroundColor = ARGB.color(alpha / 2, 60, 60, 60);
+        guiGraphics.fill(minX, minY, maxX, maxY, backgroundColor);
+
+        // Draw progress fill with nice color
+        int progressColor = ARGB.color(alpha, ARGB.red(PROGRESS_BAR_COLOR), ARGB.green(PROGRESS_BAR_COLOR), ARGB.blue(PROGRESS_BAR_COLOR));
+        guiGraphics.fill(minX + 2, minY + 1, minX + 2 + progressWidth, maxY - 1, progressColor);
+
+        // Draw subtle border
+        int borderColor = ARGB.color(alpha, 120, 120, 120);
+        guiGraphics.fill(minX, minY, maxX, minY + 1, borderColor); // top
+        guiGraphics.fill(minX, maxY - 1, maxX, maxY, borderColor); // bottom
+        guiGraphics.fill(minX, minY, minX + 1, maxY, borderColor); // left
+        guiGraphics.fill(maxX - 1, minY, maxX, maxY, borderColor); // right
     }
 
 }
