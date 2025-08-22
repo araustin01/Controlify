@@ -1,6 +1,8 @@
 package dev.isxander.splitscreen.client;
 
 import com.mojang.logging.LogUtils;
+import dev.isxander.controlify.Controlify;
+import dev.isxander.controlify.controller.ControllerUID;
 import dev.isxander.splitscreen.client.config.SplitscreenConfig;
 import dev.isxander.splitscreen.client.engine.SplitscreenEngine;
 import dev.isxander.splitscreen.server.SplitscreenSSClient;
@@ -96,7 +98,13 @@ public class SplitscreenBootstrapper {
     }
 
     private static void bootstrapAsController(Minecraft minecraft, IPCMethod connectionMethod) {
-        controller = new SplitscreenController(minecraft, connectionMethod, null);
+        // Get the current controller that triggered the splitscreen mode
+        ControllerUID currentController = Controlify.instance().getCurrentController()
+                .map(controller -> controller.uid())
+                .orElse(null);
+
+        LOGGER.info("Bootstrapping as controller with associated controller: {}", currentController);
+        controller = new SplitscreenController(minecraft, connectionMethod, currentController);
     }
 
     public static boolean isSplitscreen() {

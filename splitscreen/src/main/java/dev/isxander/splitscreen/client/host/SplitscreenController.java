@@ -1,7 +1,9 @@
 package dev.isxander.splitscreen.client.host;
 
 import com.mojang.logging.LogUtils;
+import dev.isxander.controlify.Controlify;
 import dev.isxander.controlify.controller.ControllerUID;
+import dev.isxander.controlify.controller.ControllerEntity;
 import dev.isxander.splitscreen.client.host.features.music.PawnMusicManager;
 import dev.isxander.splitscreen.client.host.features.relaunch.PendingRelaunchClientStatus;
 import dev.isxander.splitscreen.client.config.SplitscreenConfig;
@@ -50,6 +52,8 @@ public class SplitscreenController  {
     private final Map<ControllerUID, PendingRelaunchClientStatus> pendingRelaunchClients = new HashMap<>();
     private @Nullable SplitscreenFakeReloadInstance splitscreenLoaderStatus = null;
 
+    private boolean localControllerBound = false;
+
     public SplitscreenController(Minecraft minecraft, IPCMethod ipcMethod, @Nullable ControllerUID associatedController) {
         this.minecraft = minecraft;
         this.controllerBridge = new LocalControllerBridge(minecraft, this);
@@ -60,6 +64,20 @@ public class SplitscreenController  {
         this.pawnMusicManager = new PawnMusicManager();
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            // Bind the host local pawn to whatever Controlify considers the current controller once, after init.
+            if (!localControllerBound) {
+                ControllerEntity target = Controlify.instance().getCurrentController().orElseGet(() ->
+                        Controlify.instance().getControllerManager()
+                                .map(mgr -> mgr.getConnectedControllers().stream().findFirst().orElse(null))
+                                .orElse(null)
+                );
+                if (target != null) {
+                    this.localPawn.useController(target.uid());
+                    localControllerBound = true;
+                    LOGGER.info("Bound local pawn to controller {}", target.uid());
+                }
+            }
+
             this.connectionListener.tick();
 
             if (this.splitscreenEngine.consumeDirty()) {
@@ -104,6 +122,11 @@ public class SplitscreenController  {
 
             if (!(oldStatus instanceof PendingRelaunchClientStatus.WaitingForConnection)) {
                 LOGGER.warn("Pawn connected with controller {} but we were not expecting it", associatedController);
+            }
+
+            // If this is a remote pawn, instruct it to use its associated controller immediately.
+            if (pawn.isRemote()) {
+                pawn.useController(associatedController);
             }
         }
     }

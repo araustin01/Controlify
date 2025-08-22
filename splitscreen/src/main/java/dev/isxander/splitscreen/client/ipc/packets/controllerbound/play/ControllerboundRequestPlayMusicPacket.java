@@ -27,7 +27,7 @@ public record ControllerboundRequestPlayMusicPacket(Optional<Music> music, float
 
     @Override
     public void handle(ControllerPlayPacketListener handler) {
-
+        handler.handleRequestMusic(this);
     }
 
     @Override
