@@ -10,14 +10,15 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(MusicManager.class)
 public class MusicManagerMixin {
     /**
-     * Don't allow music on any client other than the primary one,
-     * since these tracks will conflict and sound awful.
+     * On pawn clients, forward music requests to the controller to avoid multiple tracks.
+     * On the controller (host) or when splitscreen is inactive, use vanilla behavior.
      */
     @WrapMethod(method = "startPlaying")
     private void preventMusicIfPawn(MusicInfo music, Operation<Void> original) {
-        SplitscreenBootstrapper.getControllerBridge().ifPresentOrElse(
-                bridge -> bridge.requestPlayMusic(music.music(), music.volume()),
-                () -> original.call(music)
-        );
+        if (SplitscreenBootstrapper.getPawn().isPresent()) {
+            SplitscreenBootstrapper.getControllerBridge().ifPresent(bridge -> bridge.requestPlayMusic(music.music(), music.volume()));
+        } else {
+            original.call(music);
+        }
     }
 }
