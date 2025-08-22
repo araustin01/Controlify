@@ -66,23 +66,9 @@ public class RelaunchUtil {
             return arg;
         }
 
-        final StringBuilder sb = new StringBuilder(arg.length() * 2);
-
-        for (int i = 0; i < arg.length(); i++) {
-            char c = arg.charAt(i);
-
-            switch (c) {
-                case ' ', '#', '\'' -> sb.append('"').append(c).append('"');
-                case '"' -> sb.append("\"\\\"\"");
-                case '\n' -> sb.append("\"\\n\"");
-                case '\r' -> sb.append("\"\\r\"");
-                case '\t' -> sb.append("\"\\t\"");
-                case '\f' -> sb.append("\"\\f\"");
-                default -> sb.append(c);
-            }
-        }
-
-        return sb.toString();
+        // If the argument contains spaces or other special characters, wrap the entire argument in quotes
+        // and escape any internal quotes
+        return "\"" + arg.replace("\"", "\\\"") + "\"";
     }
 
     private static boolean containsAnyChar(@NotNull String value, @NotNull String chars) {
