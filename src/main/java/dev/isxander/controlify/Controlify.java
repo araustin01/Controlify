@@ -609,10 +609,7 @@ public class Controlify implements ControlifyApi {
 
         if (this.currentInputMode().isController()) {
             if (minecraft.screen != null) {
-                // Legacy4J compatibility: allow Legacy4J to be the sole UI controller handler when present.
-                if (!shouldDeferUiToLegacy()) {
-                    ScreenProcessorProvider.provide(minecraft.screen).onControllerUpdate(controller);
-                }
+                ScreenProcessorProvider.provide(minecraft.screen).onControllerUpdate(controller);
             }
 
             ControlifyEvents.ACTIVE_CONTROLLER_TICKED.invoke(new ControlifyEvents.ControllerStateUpdate(controller));
@@ -701,7 +698,7 @@ public class Controlify implements ControlifyApi {
 
         if (!minecraft.mouseHandler.isMouseGrabbed())
             hideMouse(currentInputMode.isController(), true);
-        if (minecraft.screen != null && !shouldDeferUiToLegacy()) {
+    if (minecraft.screen != null) {
             ScreenProcessorProvider.provide(minecraft.screen).onInputModeChanged(currentInputMode);
         }
         if (Minecraft.getInstance().player != null) {
@@ -797,6 +794,10 @@ public class Controlify implements ControlifyApi {
 
     public static Controlify instance() {
         if (instance == null) instance = new Controlify();
+        // Register Legacy screen processors once Controlify is instantiated.
+        try {
+            dev.isxander.controlify.integration.legacy.LegacyScreenProcessors.register();
+        } catch (Throwable ignored) {}
         return instance;
     }
 
@@ -804,23 +805,8 @@ public class Controlify implements ControlifyApi {
     private static Boolean legacyPresentCache = null;
     private static java.lang.reflect.Method legacyShouldProcessInputMethod = null;
 
-    public static boolean shouldDeferUiToLegacy() {
-        try {
-            if (legacyPresentCache == null) {
-                try {
-                    Class<?> patchCls = Class.forName("wily.legacy.compat.controlify.InputConditionalPatch", false, Controlify.class.getClassLoader());
-                    legacyShouldProcessInputMethod = patchCls.getMethod("shouldLegacyProcessInput");
-                    legacyPresentCache = true;
-                } catch (ClassNotFoundException | NoSuchMethodException e) {
-                    legacyPresentCache = false; // Legacy not present or API changed.
-                }
-            }
-            if (!Boolean.TRUE.equals(legacyPresentCache) || legacyShouldProcessInputMethod == null) return false;
-            Object r = legacyShouldProcessInputMethod.invoke(null);
-            if (r instanceof Boolean b) return b; // true => Legacy wants to process UI exclusively
-        } catch (Throwable ignored) {
-            // Ignore, fail open (Controlify handles UI)
-        }
-        return false;
-    }
+    /**
+     * Deprecated: Legacy UI deferral removed. Always returns false so Controlify handles UI.
+     */
+    public static boolean shouldDeferUiToLegacy() { return false; }
 }
