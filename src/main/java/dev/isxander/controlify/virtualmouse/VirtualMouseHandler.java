@@ -324,6 +324,10 @@ public class VirtualMouseHandler {
 
     public void onScreenChanged() {
         if (minecraft.screen != null) {
+            if (dev.isxander.controlify.Controlify.shouldDeferUiToLegacy()) {
+                disableVirtualMouse();
+                return;
+            }
             if (requiresVirtualMouse()) {
                 enableVirtualMouse();
             } else {
@@ -340,6 +344,10 @@ public class VirtualMouseHandler {
 
     public void onInputModeChanged(InputMode mode) {
         if (mode.isController()) {
+            if (dev.isxander.controlify.Controlify.shouldDeferUiToLegacy()) {
+                disableVirtualMouse();
+                return;
+            }
             if (requiresVirtualMouse()) {
                 enableVirtualMouse();
             }

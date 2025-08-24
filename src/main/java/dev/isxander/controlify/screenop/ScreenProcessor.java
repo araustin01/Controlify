@@ -47,6 +47,12 @@ public class ScreenProcessor<T extends Screen> {
     }
 
     public void onControllerUpdate(ControllerEntity controller) {
+        // Legacy4J integration: if Legacy should handle UI, skip all Controlify screen processing entirely.
+        try {
+            if (dev.isxander.controlify.Controlify.shouldDeferUiToLegacy()) {
+                return;
+            }
+        } catch (Throwable ignored) {}
         Controlify.instance().virtualMouseHandler().handleControllerInput(controller);
 
         if (!Controlify.instance().virtualMouseHandler().isVirtualMouseEnabled()) {
