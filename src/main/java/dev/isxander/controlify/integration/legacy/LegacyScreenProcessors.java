@@ -2,20 +2,14 @@ package dev.isxander.controlify.integration.legacy;
 
 import dev.isxander.controlify.screenop.ScreenProcessor;
 import dev.isxander.controlify.screenop.ScreenProcessorFactory;
-import dev.isxander.controlify.screenop.ScreenProcessorProvider;
 import dev.isxander.controlify.virtualmouse.VirtualMouseBehaviour;
 import dev.isxander.controlify.controller.ControllerEntity;
-import dev.isxander.controlify.controller.input.ControllerStateView;
-import dev.isxander.controlify.controller.input.InputComponent;
 import dev.isxander.controlify.bindings.ControlifyBindings;
 import dev.isxander.controlify.api.bind.InputBinding;
 import dev.isxander.controlify.Controlify;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.network.chat.Component;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -37,7 +31,9 @@ public class LegacyScreenProcessors {
     private static void tryRegisterPlayGameScreen() {
         try {
             Class<?> playGameCls = Class.forName("wily.legacy.client.screen.PlayGameScreen", false, Controlify.class.getClassLoader());
-            ScreenProcessorFactory.register(playGameCls, LegacyPlayGameScreenProcessor::new);
+            @SuppressWarnings("unchecked")
+            Class<? extends Screen> screenCls = (Class<? extends Screen>) playGameCls;
+            ScreenProcessorFactory.registerProvider(screenCls, LegacyPlayGameScreenProcessor::new);
         } catch (Throwable ignored) {}
     }
 
@@ -115,12 +111,5 @@ public class LegacyScreenProcessors {
             }
         }
 
-        @Override
-        public void handleButtons(ControllerEntity controller) {
-            InputComponent input = controller.input().orElseThrow();
-            ControllerStateView state = input.stateNow();
-            // Use existing base behaviour for A/B etc.
-            super.handleButtons(controller);
-        }
     }
 }
