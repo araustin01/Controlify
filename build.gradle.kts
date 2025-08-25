@@ -10,6 +10,15 @@ plugins {
     id("dev.kikugie.postprocess.j52j") version "2.1-beta.3"
 }
 
+repositories {
+    mavenLocal()
+    // Factory API repository
+    maven {
+        name = "Kyubion Mod Resources"
+        url = uri("https://raw.githubusercontent.com/Kyubion-Studios/Mod-Resources/main/maven/")
+    }
+}
+
 val loader = when {
     modstitch.isLoom -> "fabric"
     modstitch.isModDevGradle -> "neoforge"
@@ -138,6 +147,22 @@ dependencies {
     modDependency("simpleVoiceChat", { "maven.modrinth:simple-voice-chat:$it" })
     // fancy menu compat
     modDependency("fancyMenu", { "maven.modrinth:fancymenu:$it" }, supportsRuntime = false)
+
+    // Legacy4J integration - always include when available
+    propMap("deps.legacy4j") { legacyVersion ->
+        // Factory API - required by Legacy4J, resolve from Kyubion Maven repository
+        propMap("deps.factory_api") { factoryApiVersion ->
+            println("[controlify] Adding Factory API dependency: wily.factory_api:factory_api-$loader:$factoryApiVersion")
+            modstitchModApi("wily.factory_api:factory_api-$loader:$factoryApiVersion") {
+                // Exclude fabric-api to avoid conflicts, similar to YACL
+                exclude(group = "net.fabricmc.fabric-api", module = "fabric-api")
+            }.productionMod()
+        }
+
+        val legacyCoordinate = "wily.legacy:legacy-$loader:$legacyVersion"
+        println("[controlify] Adding Legacy4J mod dependency: $legacyCoordinate")
+        modstitchModImplementation(legacyCoordinate).productionMod()
+    }
 }
 
 j52j {
