@@ -10,6 +10,8 @@ builds of Minecraft.**
 
 ## Fixes
 
-- Fix startup crash on literally every target
+
+## Unreleased
+- Optional direct Legacy4J integration path: run Gradle with -PincludeLegacyLocal=true -PlegacyVersion=<mcVersion>-<legacyModVersion> to add compileOnly Legacy4J dependency and allow future removal of reflection bridges.
 
 

@@ -43,7 +43,7 @@ public class SodiumGuiScreenProcessor extends ScreenProcessor<Screen> {
     }
 
     @Override
-    protected void setInitialFocus() {
+    public void setInitialFocus() {
 
     }
 

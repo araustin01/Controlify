@@ -16,7 +16,7 @@ public class AbstractSignEditScreenProcessor extends ScreenProcessor<AbstractSig
     }
 
     @Override
-    protected void setInitialFocus() {
+    public void setInitialFocus() {
         if (Controlify.instance().currentInputMode() == InputMode.MIXED)
             holdRepeatHelper.clearDelay();
         else

@@ -1,0 +1,60 @@
+---
+title: Legacy4J Integration
+description: Notes on Controlify <-> Legacy4J controller UI bridge
+---
+
+This document outlines the phased migration from broad reflection to direct typed calls for Legacy4J screens.
+
+Current runtime strategy:
+
+1. Registration phase discovers Legacy4J screen classes (e.g. `PlayGameScreen`, `LegacyCraftingScreen`) via `Class.forName` and attaches `ScreenProcessor`s.
+2. `DirectLegacyAccess` performs cached reflective access for high-traffic methods (tab switching, crafting info toggle, recipe cycling) with minimal lookup overhead.
+3. `ReflectionHelper` covers secondary features (RenderableVList, ScrollableRenderer) until we decide they are worth direct wrappers.
+
+Enabling direct compile path:
+
+Run Gradle with:
+
+```
+gradlew :build -PincludeLegacyLocal=true -PlegacyVersion=<mcVersion>-<legacyModVersion>
+```
+
+Example:
+
+```
+gradlew :build -PincludeLegacyLocal=true -PlegacyVersion=1.21.5-1.8.5-lts
+```
+
+This now adds a traditional runtime mod dependency resolved from your local Maven repository:
+
+- Group: `wily.legacy`
+- Artifact: `legacy-<loader>` (loader is inferred: `fabric` or `neoforge`)
+- Version: `<mcVersion>-<legacyModVersion>`
+
+Details:
+
+- When `-PincludeLegacyLocal=true` is set, the build will temporarily add `mavenLocal()` and the `factory_api` mirror (`https://jm.gserv.me/repository/maven-public/`) to repositories and declare `modstitchModImplementation("wily.legacy:legacy-<loader>:<version>")`.
+- The dependency is also marked as a production mod, so it will load at runtime during local runs and be included in the produced final jars list as appropriate.
+- If the coordinates are missing in the local Maven (e.g. you haven't published Legacy4J locally yet), resolve/publish Legacy4J first.
+
+Migration steps (unchanged plan):
+
+- Introduce thin adapter interfaces wrapping `TabList`, `LegacyCraftingScreen` internals.
+- Replace calls in `DirectLegacyAccess` / `ReflectionHelper` with direct symbols guarded by presence checks.
+- Remove dead reflective branches once stabilized.
+
+Performance considerations:
+
+- Cached Method/Field objects in `DirectLegacyAccess` reduce per-frame overhead vs repeated lookups.
+- Direct path will enable inlining/JIT once reflection is removed, further lowering input latency for rapid tab/recipe cycling.
+
+Troubleshooting:
+
+| Issue | Likely Cause | Action |
+|-------|--------------|--------|
+| Fails to configure with includeLegacyLocal | Missing `-PlegacyVersion` | Provide a version like `1.21.5-1.8.5-lts` |
+| Dependency not found | Not in `mavenLocal()` | Publish Legacy4J to local Maven first |
+| Tab buttons unresponsive | API signature change | Update facade or fallback reflection |
+
+--
+Last updated: {date}

@@ -204,5 +204,22 @@
     "controlify:cycle_opt_backward": {
       "axis": "controlify:axis/right_stick_left"
     }
+    ,
+    "controlify:legacy_info_toggle": {
+      "button": "controlify:button/west"
+    },
+    "controlify:legacy_recipe_cycle_next": {
+      "button": "controlify:button/right_shoulder"
+    },
+    "controlify:legacy_recipe_cycle_prev": {
+      "button": "controlify:button/left_shoulder"
+    },
+    "controlify:legacy_container_action": {
+      "button": "controlify:button/south"
+    }
+    ,
+    "fabric-key-binding-api-v1:legacy.key.crafting": {
+      "button": "controlify:button/west"
+    }
   }
 }

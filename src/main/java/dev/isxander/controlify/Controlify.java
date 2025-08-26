@@ -187,6 +187,14 @@ public class Controlify implements ControlifyApi {
 
         ControlifyBindings.registerModdedBindings();
 
+        // Register Legacy4J-specific bindings early (before the bind registry locks)
+        try {
+            dev.isxander.controlify.integration.legacy.LegacyBindings.register();
+            CUtil.LOGGER.log("[Legacy4J] Registered bindings early in initialization");
+        } catch (Throwable t) {
+            CUtil.LOGGER.warn("[Legacy4J] Failed to register legacy bindings early", t);
+        }
+
         PlatformClientUtil.registerPostScreenRender((screen, graphics, mouseX, mouseY, tickDelta) ->
                 ControlifyApi.get().getCurrentController().ifPresent(controller -> {
                     virtualMouseHandler().renderVirtualMouse(graphics);
@@ -230,6 +238,9 @@ public class Controlify implements ControlifyApi {
         if (this.config().globalSettings().useEnhancedSteamDeckDriver) {
             doSteamDeckChecks();
         }
+
+        // Register Legacy screen processors once Controlify is instantiated.
+        dev.isxander.controlify.integration.legacy.LegacyScreenProcessors.register();
     }
 
     private void doSteamDeckChecks() {
@@ -794,10 +805,6 @@ public class Controlify implements ControlifyApi {
 
     public static Controlify instance() {
         if (instance == null) instance = new Controlify();
-        // Register Legacy screen processors once Controlify is instantiated.
-        try {
-            dev.isxander.controlify.integration.legacy.LegacyScreenProcessors.register();
-        } catch (Throwable ignored) {}
         return instance;
     }
 

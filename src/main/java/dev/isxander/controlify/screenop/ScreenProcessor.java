@@ -254,7 +254,7 @@ public class ScreenProcessor<T extends Screen> {
 
     }
 
-    protected void setInitialFocus() {
+    public void setInitialFocus() {
         if (screen.getFocused() == null && Controlify.instance().currentInputMode().isController() && !Controlify.instance().virtualMouseHandler().isVirtualMouseEnabled()) {
             var accessor = (ScreenAccessor) screen;
             ComponentPath path = screen.nextFocusPath(accessor.invokeCreateArrowEvent(ScreenDirection.DOWN));
