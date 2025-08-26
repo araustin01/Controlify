@@ -22,6 +22,9 @@ public class LegacyScreenProcessors {
         registered = true;
         
         try {
+            // Register component processors first so widgets get processors
+            LegacyComponentProcessors.register();
+
             // Register screen processors for specific Legacy4J screen types that actually exist
             ScreenProcessorFactory.registerProvider(PlayGameScreen.class, LegacyPlayGameScreenProcessor::new);
             ScreenProcessorFactory.registerProvider(LegacyCraftingScreen.class, LegacyCraftingScreenProcessor::new);
@@ -66,7 +69,7 @@ public class LegacyScreenProcessors {
         public void onControllerUpdate(ControllerEntity controller) {
             // Handle info toggle binding if the screen supports it
             if (LegacyBindings.LEGACY_INFO_TOGGLE.on(controller).justPressed()) {
-                // Use key simulation since we don't have direct API access to toggleInfo
+                // Use key simulation since there is no public API for toggleInfo
                 screen.keyPressed(org.lwjgl.glfw.GLFW.GLFW_KEY_X, 0, 0);
                 return;
             }

@@ -8,6 +8,7 @@ import dev.isxander.controlify.utils.CUtil;
 // Direct imports for Legacy4J components that implement GuiEventListener
 import wily.legacy.client.screen.TabList;
 import wily.legacy.client.screen.LegacyTabButton;
+import wily.legacy.client.screen.LegacySliderButton;
 
 /**
  * Component processors for Legacy4J UI elements.
@@ -26,9 +27,9 @@ public class LegacyComponentProcessors {
             // Register processors for Legacy4J components that implement GuiEventListener
             ComponentProcessorProvider.REGISTRY.register(TabList.class, TabListComponentProcessor::new);
             ComponentProcessorProvider.REGISTRY.register(LegacyTabButton.class, LegacyTabButtonComponentProcessor::new);
+            ComponentProcessorProvider.REGISTRY.register(LegacySliderButton.class, LegacySliderButtonComponentProcessor::new);
 
-            // Note: LegacyScroller, RenderableVList, and RecipeIconHolder do not implement GuiEventListener
-            // so they cannot be registered with the component processor registry
+            // Note: Other legacy components are not registered here if they don't implement GuiEventListener
 
             CUtil.LOGGER.log("[Legacy4J] Registered component processors with direct API access");
         } catch (Throwable t) {
