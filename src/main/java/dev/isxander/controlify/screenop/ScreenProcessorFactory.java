@@ -27,6 +27,15 @@ public final class ScreenProcessorFactory {
         factories.put(screenClass, factory);
     }
 
+    /**
+     * Returns true only if there is an exact factory registered for the given screen class
+     * (i.e. without walking superclasses). Used by container mixins to decide whether to
+     * override the default container processor with a specialised one.
+     */
+    public static boolean hasExactFactory(Class<? extends Screen> screenClass) {
+        return factories.containsKey(screenClass);
+    }
+
     private static <T extends Screen> ScreenProcessor<T> createDefault(T screen) {
         return new ScreenProcessor<>(screen);
     }

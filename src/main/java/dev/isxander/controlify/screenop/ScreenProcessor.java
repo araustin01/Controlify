@@ -50,8 +50,10 @@ public class ScreenProcessor<T extends Screen> {
         Controlify.instance().virtualMouseHandler().handleControllerInput(controller);
 
         if (!Controlify.instance().virtualMouseHandler().isVirtualMouseEnabled()) {
-            if (!handleComponentNavOverride(controller))
-                handleComponentNavigation(controller);
+            if (shouldHandleComponentNavigation()) {
+                if (!handleComponentNavOverride(controller))
+                    handleComponentNavigation(controller);
+            }
 
             if (!handleComponentButtonOverride(controller))
                 handleButtons(controller);
@@ -61,7 +63,7 @@ public class ScreenProcessor<T extends Screen> {
 
         handleTabNavigation(controller);
 
-        eventListeners.forEach(listener -> listener.onControllerInput(controller));
+         eventListeners.forEach(listener -> listener.onControllerInput(controller));
     }
 
     public void render(ControllerEntity controller, GuiGraphics graphics, float tickDelta) {
@@ -310,4 +312,10 @@ public class ScreenProcessor<T extends Screen> {
     public static void playClackSound() {
         minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
+
+    /**
+     * Hook for subclasses that wish to fully replace default component navigation handling.
+     * Returning false prevents handleComponentNavigation / overrides from being invoked here.
+     */
+    protected boolean shouldHandleComponentNavigation() { return true; }
 }

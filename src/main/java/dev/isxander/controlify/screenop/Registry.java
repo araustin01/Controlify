@@ -34,13 +34,39 @@ public class Registry<T, U> {
             return Optional.of(cached);
 
         Class<? extends T> clazz = (Class<? extends T>) object.getClass();
-        Function<T, U> constructor = registry.get(clazz);
-        if (constructor == null)
-            return Optional.empty();
 
-        U constructed = constructor.apply(object);
-        this.cache.put(object, constructed);
-        return Optional.of(constructed);
+        // First try exact class match (existing behavior)
+        Function<T, U> constructor = registry.get(clazz);
+        if (constructor != null) {
+            U constructed = constructor.apply(object);
+            this.cache.put(object, constructed);
+            return Optional.of(constructed);
+        }
+
+    // If no exact match, try inheritance matching (superclasses & interfaces)
+    constructor = findByHierarchy(clazz);
+        if (constructor != null) {
+            U constructed = constructor.apply(object);
+            this.cache.put(object, constructed);
+            return Optional.of(constructed);
+        }
+
+        return Optional.empty();
+    }
+
+    private Function<T, U> findByHierarchy(Class<?> clazz) {
+        Class<?> current = clazz;
+        while (current != null) {
+            Function<T,U> fn = registry.get(current);
+            if (fn != null) return fn;
+            // search interfaces of this level
+            for (Class<?> iface : current.getInterfaces()) {
+                fn = registry.get(iface);
+                if (fn != null) return fn;
+            }
+            current = current.getSuperclass();
+        }
+        return null;
     }
 
     @ApiStatus.Internal

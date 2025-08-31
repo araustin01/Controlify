@@ -270,6 +270,23 @@ public final class ControlifyBindings {
             .id("controlify", "gui_abstract_action_3")
             .category(GUI_CATEGORY)
             .allowedContexts(BindContext.REGULAR_SCREEN));
+    // Phase 1 scaffolding: generic page & auxiliary GUI actions for legacy integration
+    public static final InputBindingSupplier GUI_PAGE_UP = ControlifyBindApi.get().registerBinding(builder -> builder
+            .id("controlify", "gui_page_up")
+            .category(GUI_CATEGORY)
+            .allowedContexts(BindContext.ANY_SCREEN));
+    public static final InputBindingSupplier GUI_PAGE_DOWN = ControlifyBindApi.get().registerBinding(builder -> builder
+            .id("controlify", "gui_page_down")
+            .category(GUI_CATEGORY)
+            .allowedContexts(BindContext.ANY_SCREEN));
+    public static final InputBindingSupplier GUI_FOCUS_SEARCH = ControlifyBindApi.get().registerBinding(builder -> builder
+            .id("controlify", "gui_focus_search")
+            .category(GUI_CATEGORY)
+            .allowedContexts(BindContext.ANY_SCREEN));
+    public static final InputBindingSupplier GUI_TOGGLE_DETAIL = ControlifyBindApi.get().registerBinding(builder -> builder
+            .id("controlify", "gui_toggle_detail")
+            .category(GUI_CATEGORY)
+            .allowedContexts(BindContext.ANY_SCREEN));
     public static final InputBindingSupplier GUI_NAVI_UP = ControlifyBindApi.get().registerBinding(builder -> builder
             .id("controlify", "gui_navi_up")
             .category(GUI_CATEGORY)

@@ -7,6 +7,7 @@ import dev.isxander.controlify.Controlify;
 import dev.isxander.controlify.controller.ControllerEntity;
 import dev.isxander.controlify.screenop.ScreenProcessor;
 import dev.isxander.controlify.screenop.ScreenProcessorProvider;
+import dev.isxander.controlify.screenop.ScreenProcessorFactory;
 import dev.isxander.controlify.screenop.compat.vanilla.AbstractContainerScreenProcessor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -38,15 +39,29 @@ public abstract class AbstractContainerScreenMixin implements ScreenProcessorPro
     @Shadow @Final private List<ItemSlotMouseAction> itemSlotMouseActions;
 
     @Unique
-    protected AbstractContainerScreenProcessor<?> screenProcessor = new AbstractContainerScreenProcessor<>(
-            (AbstractContainerScreen<?>) (Object) this,
-            () -> hoveredSlot,
-            this::slotClicked,
-            this::handleControllerItemSlotActions
-    );
+    protected AbstractContainerScreenProcessor<?> screenProcessor;
+
+    @Unique
+    private ScreenProcessor<?> controlify$factoryProcessor;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void controlify$initContainerProcessor(CallbackInfo ci) {
+        // If there is an exact factory registered for this concrete screen class, prefer that.
+        if (ScreenProcessorFactory.hasExactFactory(((AbstractContainerScreen<?>) (Object) this).getClass())) {
+            controlify$factoryProcessor = ScreenProcessorFactory.createForScreen((AbstractContainerScreen<?>) (Object) this);
+        } else {
+            screenProcessor = new AbstractContainerScreenProcessor<>(
+                    (AbstractContainerScreen<?>) (Object) this,
+                    () -> hoveredSlot,
+                    this::slotClicked,
+                    this::handleControllerItemSlotActions
+            );
+        }
+    }
 
     @Override
     public ScreenProcessor<?> screenProcessor() {
+        if (controlify$factoryProcessor != null) return controlify$factoryProcessor;
         return screenProcessor;
     }
 
@@ -62,7 +77,10 @@ public abstract class AbstractContainerScreenMixin implements ScreenProcessorPro
 
         if (oldSlot != null || newSlot != null) {
             if (oldSlot == null || (newSlot != null && newSlot.index != oldSlot.index)) {
-                screenProcessor.onHoveredSlotChanged(newSlot, oldSlot);
+                ScreenProcessor<?> processor = screenProcessor();
+                if (processor instanceof AbstractContainerScreenProcessor<?> containerProcessor) {
+                    containerProcessor.onHoveredSlotChanged(newSlot, oldSlot);
+                }
             }
         }
     }
