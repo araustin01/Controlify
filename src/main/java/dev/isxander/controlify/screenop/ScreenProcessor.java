@@ -12,6 +12,7 @@ import dev.isxander.controlify.controller.input.InputComponent;
 import dev.isxander.controlify.mixins.feature.screenop.ScreenAccessor;
 import dev.isxander.controlify.mixins.feature.screenop.vanilla.TabNavigationBarAccessor;
 import dev.isxander.controlify.sound.ControlifyClientSounds;
+import dev.isxander.controlify.utils.CUtil;
 import dev.isxander.controlify.utils.HoldRepeatHelper;
 import dev.isxander.controlify.virtualmouse.VirtualMouseBehaviour;
 import dev.isxander.controlify.virtualmouse.VirtualMouseHandler;
@@ -37,7 +38,7 @@ public class ScreenProcessor<T extends Screen> {
     protected final HoldRepeatHelper holdRepeatHelper = new HoldRepeatHelper(10, 3);
     protected static final Minecraft minecraft = Minecraft.getInstance();
 
-    private final List<ScreenControllerEventListener> eventListeners = new ArrayList<>();
+    protected final List<ScreenControllerEventListener> eventListeners = new ArrayList<>();
 
     public ScreenProcessor(T screen) {
         this.screen = screen;
@@ -63,7 +64,7 @@ public class ScreenProcessor<T extends Screen> {
 
         handleTabNavigation(controller);
 
-         eventListeners.forEach(listener -> listener.onControllerInput(controller));
+        eventListeners.forEach(listener -> listener.onControllerInput(controller));
     }
 
     public void render(ControllerEntity controller, GuiGraphics graphics, float tickDelta) {
@@ -90,6 +91,7 @@ public class ScreenProcessor<T extends Screen> {
     }
 
     protected void handleComponentNavigation(ControllerEntity controller) {
+        CUtil.LOGGER.log("Handling component navigation for screen: " + screen.getClass().getName());
         if (screen.getFocused() == null)
             setInitialFocus();
 

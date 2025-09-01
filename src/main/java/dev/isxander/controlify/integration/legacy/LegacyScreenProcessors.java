@@ -5,6 +5,7 @@ import dev.isxander.controlify.screenop.compat.legacy.LegacyScreenTabProcessor;
 import dev.isxander.controlify.utils.CUtil;
 
 // Direct imports for Legacy4J screens (no reflection needed)
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import wily.legacy.client.screen.*;
 import dev.isxander.controlify.screenop.compat.legacy.LegacyScreenProcessor;
 
@@ -22,14 +23,15 @@ public class LegacyScreenProcessors {
             // Register a single generic processor for all known Legacy screens
             ScreenProcessorFactory.registerProvider(PlayGameScreen.class, LegacyScreenTabProcessor::new);
             ScreenProcessorFactory.registerProvider(LegacyCraftingScreen.class,  LegacyScreenTabProcessor::new);
-            ScreenProcessorFactory.registerProvider(PanelVListScreen.class, LegacyScreenProcessor::new);
+            ScreenProcessorFactory.registerProvider(PanelVListScreen.class, LegacyScreenTabProcessor::new);
             ScreenProcessorFactory.registerProvider(LegacyLoomScreen.class, LegacyScreenProcessor::new);
             ScreenProcessorFactory.registerProvider(LegacyStonecutterScreen.class, LegacyScreenProcessor::new);
-            ScreenProcessorFactory.registerProvider(MixedCraftingScreen.class, LegacyScreenProcessor::new);
+            ScreenProcessorFactory.registerProvider(MixedCraftingScreen.class,  LegacyScreenTabProcessor::new);
             ScreenProcessorFactory.registerProvider(LegacyMerchantScreen.class, LegacyScreenProcessor::new);
-            ScreenProcessorFactory.registerProvider(CreativeModeScreen.class, LegacyScreenProcessor::new);
+            ScreenProcessorFactory.registerProvider(CreativeModeScreen.class, LegacyScreenTabProcessor::new);
+            ScreenProcessorFactory.registerProvider(CreateWorldScreen.class, LegacyScreenProcessor::new);
 
-            CUtil.LOGGER.log("[Legacy4J] Registered generic LegacyScreenProcessor for Legacy screens");
+            CUtil.LOGGER.log("[Legacy4J] Registered generic LegacyScreenProcessorss for Legacy screens");
         } catch (Throwable t) {
             CUtil.LOGGER.warn("[Legacy4J] Failed to register generic Legacy screen processor - Legacy4J may not be available", t);
         }

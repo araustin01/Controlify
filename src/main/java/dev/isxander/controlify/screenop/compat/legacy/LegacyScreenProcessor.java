@@ -8,6 +8,7 @@ import dev.isxander.controlify.controller.input.GamepadInputs;
 import dev.isxander.controlify.controller.input.InputComponent;
 import dev.isxander.controlify.screenop.ScreenProcessor;
 import dev.isxander.controlify.utils.CUtil;
+import dev.isxander.controlify.virtualmouse.VirtualMouseBehaviour;
 import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -18,6 +19,7 @@ import net.minecraft.client.gui.screens.Screen;
 public class LegacyScreenProcessor<T extends Screen> extends ScreenProcessor<T> {
     public LegacyScreenProcessor(T screen) {
         super(screen);
+        CUtil.LOGGER.log("Creating LegacyScreenProcessor for " + screen.getClass().getSimpleName());
     }
 
     @Override
@@ -29,6 +31,31 @@ public class LegacyScreenProcessor<T extends Screen> extends ScreenProcessor<T> 
     @Override
     public void setInitialFocus() {
         // No-op: let Legacy4J manage focus entirely.
+    }
+
+    @Override
+    public VirtualMouseBehaviour virtualMouseBehaviour() {
+        return VirtualMouseBehaviour.DISABLED;
+    }
+
+    @Override
+    public void onControllerUpdate(ControllerEntity controller) {
+        Controlify.instance().virtualMouseHandler().handleControllerInput(controller);
+
+        if (shouldHandleComponentNavigation()) {
+            if (!handleComponentNavOverride(controller))
+                handleComponentNavigation(controller);
+        }
+
+        if (!handleComponentButtonOverride(controller))
+            handleButtons(controller);
+
+        if (Controlify.instance().virtualMouseHandler().isVirtualMouseEnabled())
+            handleScreenVMouse(controller, Controlify.instance().virtualMouseHandler());
+
+        handleTabNavigation(controller);
+
+        super.eventListeners.forEach(listener -> listener.onControllerInput(controller));
     }
 
     @Override

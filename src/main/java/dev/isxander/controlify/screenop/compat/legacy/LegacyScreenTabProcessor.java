@@ -31,8 +31,6 @@ public class LegacyScreenTabProcessor<T extends Screen> extends LegacyScreenProc
 
         var next = ControlifyBindings.GUI_NEXT_TAB.on(controller);
         var prev  = ControlifyBindings.GUI_PREV_TAB.on(controller);
-        var up    = ControlifyBindings.VMOUSE_MOVE_UP.on(controller);
-        var down  = ControlifyBindings.VMOUSE_MOVE_DOWN.on(controller);
 
         Integer key = null;
         if (next.digitalNow() && (repeatEventAvailable || !next.digitalPrev())) {
@@ -41,12 +39,12 @@ public class LegacyScreenTabProcessor<T extends Screen> extends LegacyScreenProc
         } else if (prev.digitalNow() && (repeatEventAvailable || !prev.digitalPrev())) {
             key = GLFW.GLFW_KEY_LEFT_BRACKET;
             if (!prev.digitalPrev()) holdRepeatHelper.reset();
-        } else if (up.digitalNow() && (repeatEventAvailable || !up.digitalPrev())) {
+        } else if (state.isButtonDown(GamepadInputs.RIGHT_TRIGGER_AXIS) && (repeatEventAvailable || !prevState.isButtonDown(GamepadInputs.RIGHT_TRIGGER_AXIS))) {
             key = GLFW.GLFW_KEY_PAGE_UP;
-            if (!up.digitalPrev()) holdRepeatHelper.reset();
-        } else if (down.digitalNow() && (repeatEventAvailable || !down.digitalPrev())) {
+            if (!prevState.isButtonDown(GamepadInputs.RIGHT_TRIGGER_AXIS)) holdRepeatHelper.reset();
+        } else if (state.isButtonDown(GamepadInputs.LEFT_TRIGGER_AXIS) && (repeatEventAvailable || !prevState.isButtonDown(GamepadInputs.LEFT_TRIGGER_AXIS))) {
             key = GLFW.GLFW_KEY_PAGE_DOWN;
-            if (!down.digitalPrev()) holdRepeatHelper.reset();
+            if (!prevState.isButtonDown(GamepadInputs.LEFT_TRIGGER_AXIS)) holdRepeatHelper.reset();
         }
 
         if (key != null) {
