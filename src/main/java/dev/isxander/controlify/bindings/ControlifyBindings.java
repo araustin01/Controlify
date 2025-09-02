@@ -2,6 +2,8 @@ package dev.isxander.controlify.bindings;
 
 import dev.isxander.controlify.api.bind.ControlifyBindApi;
 import dev.isxander.controlify.api.bind.InputBindingSupplier;
+import dev.isxander.controlify.bindings.input.AxisInput;
+import dev.isxander.controlify.controller.input.GamepadInputs;
 import dev.isxander.controlify.platform.client.PlatformClientUtil;
 import dev.isxander.controlify.utils.CUtil;
 import net.minecraft.ChatFormatting;
@@ -279,6 +281,19 @@ public final class ControlifyBindings {
             .id("controlify", "gui_page_down")
             .category(GUI_CATEGORY)
             .allowedContexts(BindContext.ANY_SCREEN));
+    // Trigger bindings for analog-to-digital conversion with threshold
+    public static final InputBindingSupplier GUI_TRIG_RIGHT = ControlifyBindApi.get().registerBinding(builder -> builder
+            .id("controlify", "gui_trig_right")
+            .category(GUI_CATEGORY)
+            .allowedContexts(BindContext.ANY_SCREEN)
+            .defaultInput(new AxisInput(GamepadInputs.RIGHT_TRIGGER_AXIS)));
+
+    public static final InputBindingSupplier GUI_TRIG_LEFT = ControlifyBindApi.get().registerBinding(builder -> builder
+            .id("controlify", "gui_trig_left")
+            .category(GUI_CATEGORY)
+            .allowedContexts(BindContext.ANY_SCREEN)
+            .defaultInput(new AxisInput(GamepadInputs.LEFT_TRIGGER_AXIS)));
+
     public static final InputBindingSupplier GUI_FOCUS_SEARCH = ControlifyBindApi.get().registerBinding(builder -> builder
             .id("controlify", "gui_focus_search")
             .category(GUI_CATEGORY)

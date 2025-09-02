@@ -73,36 +73,37 @@ public class LegacyScreenProcessor<T extends Screen> extends ScreenProcessor<T> 
         var up    = ControlifyBindings.GUI_NAVI_UP.on(controller);
         var down  = ControlifyBindings.GUI_NAVI_DOWN.on(controller);
 
-        Integer key = null;
+        LegacyKeyBinding binding = null;
         if (right.digitalNow() && (repeatEventAvailable || !right.digitalPrev())) {
-            key = GLFW.GLFW_KEY_RIGHT;
+            binding = new LegacyKeyBinding(GLFW.GLFW_KEY_RIGHT, 0, 0);
             if (!right.digitalPrev()) holdRepeatHelper.reset();
         } else if (left.digitalNow() && (repeatEventAvailable || !left.digitalPrev())) {
-            key = GLFW.GLFW_KEY_LEFT;
+            binding = new LegacyKeyBinding(GLFW.GLFW_KEY_LEFT, 0, 0);
             if (!left.digitalPrev()) holdRepeatHelper.reset();
         } else if (up.digitalNow() && (repeatEventAvailable || !up.digitalPrev())) {
-            key = GLFW.GLFW_KEY_UP;
+            binding = new LegacyKeyBinding(GLFW.GLFW_KEY_UP, 0, 0);
             if (!up.digitalPrev()) holdRepeatHelper.reset();
         } else if (down.digitalNow() && (repeatEventAvailable || !down.digitalPrev())) {
-            key = GLFW.GLFW_KEY_DOWN;
+            binding = new LegacyKeyBinding(GLFW.GLFW_KEY_DOWN, 0, 0);
             if (!down.digitalPrev()) holdRepeatHelper.reset();
         } else if (state.isButtonDown(GamepadInputs.DPAD_RIGHT_BUTTON) && (repeatEventAvailable || !prevState.isButtonDown(GamepadInputs.DPAD_RIGHT_BUTTON))) {
-            key = GLFW.GLFW_KEY_RIGHT;
+            binding = new LegacyKeyBinding(GLFW.GLFW_KEY_RIGHT, 0, 0);
             if (!prevState.isButtonDown(GamepadInputs.DPAD_RIGHT_BUTTON)) holdRepeatHelper.reset();
         } else if (state.isButtonDown(GamepadInputs.DPAD_LEFT_BUTTON) && (repeatEventAvailable || !prevState.isButtonDown(GamepadInputs.DPAD_LEFT_BUTTON))) {
-            key = GLFW.GLFW_KEY_LEFT;
+            binding = new LegacyKeyBinding(GLFW.GLFW_KEY_LEFT, 0, 0);
             if (!prevState.isButtonDown(GamepadInputs.DPAD_LEFT_BUTTON)) holdRepeatHelper.reset();
         } else if (state.isButtonDown(GamepadInputs.DPAD_UP_BUTTON) && (repeatEventAvailable || !prevState.isButtonDown(GamepadInputs.DPAD_UP_BUTTON))) {
-            key = GLFW.GLFW_KEY_UP;
+            binding = new LegacyKeyBinding(GLFW.GLFW_KEY_UP, 0, 0);
             if (!prevState.isButtonDown(GamepadInputs.DPAD_UP_BUTTON)) holdRepeatHelper.reset();
         } else if (state.isButtonDown(GamepadInputs.DPAD_DOWN_BUTTON) && (repeatEventAvailable || !prevState.isButtonDown(GamepadInputs.DPAD_DOWN_BUTTON))) {
-            key = GLFW.GLFW_KEY_DOWN;
+            binding = new LegacyKeyBinding(GLFW.GLFW_KEY_DOWN, 0, 0);
             if (!prevState.isButtonDown(GamepadInputs.DPAD_DOWN_BUTTON)) holdRepeatHelper.reset();
         }
 
-        if (key != null) {
-            screen.keyPressed(key, 0, 0);
+        if (binding != null) {
+            screen.keyPressed(binding.key(), binding.scan(), binding.mods());
             holdRepeatHelper.onNavigate();
         }
     }
+    record LegacyKeyBinding(int key, int scan, int mods) {}
 }
