@@ -32,12 +32,6 @@ public class LegacyScreenProcessor<T extends Screen> extends ScreenProcessor<T> 
     public void setInitialFocus() {
         // No-op: let Legacy4J manage focus entirely.
     }
-
-    @Override
-    public VirtualMouseBehaviour virtualMouseBehaviour() {
-        return VirtualMouseBehaviour.DISABLED;
-    }
-
     @Override
     public void onControllerUpdate(ControllerEntity controller) {
         Controlify.instance().virtualMouseHandler().handleControllerInput(controller);

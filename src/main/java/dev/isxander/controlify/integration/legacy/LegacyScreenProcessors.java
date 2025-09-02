@@ -1,10 +1,12 @@
 package dev.isxander.controlify.integration.legacy;
 
 import dev.isxander.controlify.screenop.ScreenProcessorFactory;
+import dev.isxander.controlify.screenop.compat.legacy.LegacyCraftingScreenProcessor;
 import dev.isxander.controlify.screenop.compat.legacy.LegacyScreenTabProcessor;
 import dev.isxander.controlify.utils.CUtil;
 
 // Direct imports for Legacy4J screens (no reflection needed)
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import wily.legacy.client.screen.*;
 import dev.isxander.controlify.screenop.compat.legacy.LegacyScreenProcessor;
@@ -22,7 +24,7 @@ public class LegacyScreenProcessors {
         try {
             // Register a single generic processor for all known Legacy screens
             ScreenProcessorFactory.registerProvider(PlayGameScreen.class, LegacyScreenTabProcessor::new);
-            ScreenProcessorFactory.registerProvider(LegacyCraftingScreen.class,  LegacyScreenTabProcessor::new);
+            ScreenProcessorFactory.registerProvider(LegacyCraftingScreen.class, LegacyCraftingScreenProcessor::new);
             ScreenProcessorFactory.registerProvider(PanelVListScreen.class, LegacyScreenTabProcessor::new);
             ScreenProcessorFactory.registerProvider(LegacyLoomScreen.class, LegacyScreenProcessor::new);
             ScreenProcessorFactory.registerProvider(LegacyStonecutterScreen.class, LegacyScreenProcessor::new);
@@ -30,6 +32,7 @@ public class LegacyScreenProcessors {
             ScreenProcessorFactory.registerProvider(LegacyMerchantScreen.class, LegacyScreenProcessor::new);
             ScreenProcessorFactory.registerProvider(CreativeModeScreen.class, LegacyScreenTabProcessor::new);
             ScreenProcessorFactory.registerProvider(CreateWorldScreen.class, LegacyScreenProcessor::new);
+            ScreenProcessorFactory.registerProvider(InventoryScreen.class, LegacyScreenProcessor::new);
 
             CUtil.LOGGER.log("[Legacy4J] Registered generic LegacyScreenProcessorss for Legacy screens");
         } catch (Throwable t) {
