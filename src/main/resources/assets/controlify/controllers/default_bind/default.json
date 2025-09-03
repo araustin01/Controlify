@@ -60,11 +60,14 @@
     "controlify:inventory": {
       "button": "controlify:button/north"
     },
+    "controlify:crafting": {
+      "button": "controlify:button/west"
+    },
     "controlify:change_perspective": {
       "button": "controlify:button/back"
     },
     "controlify:swap_hands": {
-      "button": "controlify:button/west"
+      "button": "empty"
     },
     "controlify:open_chat": {
       "button": "controlify:button/dpad_up"

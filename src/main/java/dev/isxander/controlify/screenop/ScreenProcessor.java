@@ -91,7 +91,6 @@ public class ScreenProcessor<T extends Screen> {
     }
 
     protected void handleComponentNavigation(ControllerEntity controller) {
-        CUtil.LOGGER.log("Handling component navigation for screen: " + screen.getClass().getName());
         if (screen.getFocused() == null)
             setInitialFocus();
 

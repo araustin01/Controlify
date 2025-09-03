@@ -19,7 +19,6 @@ import net.minecraft.client.gui.screens.Screen;
 public class LegacyScreenProcessor<T extends Screen> extends ScreenProcessor<T> {
     public LegacyScreenProcessor(T screen) {
         super(screen);
-        CUtil.LOGGER.log("Creating LegacyScreenProcessor for " + screen.getClass().getSimpleName());
     }
 
     @Override
@@ -54,7 +53,6 @@ public class LegacyScreenProcessor<T extends Screen> extends ScreenProcessor<T> 
 
     @Override
     protected void handleComponentNavigation(ControllerEntity controller) {
-        CUtil.LOGGER.log(getClass().getSimpleName() + " handling component navigation for " + screen.getClass().getSimpleName());
         // Only emit keyboard events and let Legacy handle. No focus path changes here.
         boolean repeatEventAvailable = holdRepeatHelper.canNavigate();
 

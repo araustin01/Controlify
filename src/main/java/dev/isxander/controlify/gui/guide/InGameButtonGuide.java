@@ -226,6 +226,11 @@ public class InGameButtonGuide implements IngameGuideRegistry {
                 return Optional.of(Component.translatable("controlify.guide.ingame.inventory"));
             return Optional.empty();
         });
+        registerGuideAction(ControlifyBindings.CRAFTING.on(controller), ActionLocation.RIGHT, (ctx) -> {
+            if (ctx.client().screen == null)
+                return Optional.of(Component.translatable("controlify.guide.ingame.crafting"));
+            return Optional.empty();
+        });
         registerGuideAction(ControlifyBindings.RADIAL_MENU.on(controller), ActionLocation.RIGHT, ctx -> {
             if (ctx.client().screen == null)
                 return Optional.of(Component.translatable("controlify.gui.radial_menu"));

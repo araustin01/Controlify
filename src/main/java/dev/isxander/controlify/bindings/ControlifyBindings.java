@@ -146,6 +146,11 @@ public final class ControlifyBindings {
             .category(INVENTORY_CATEGORY)
             .allowedContexts(BindContext.IN_GAME)
             .radialCandidate(RadialIcons.getItem(Items.CHEST)));
+    // add a crafting binding to mirror inventory for hint display
+    public static final InputBindingSupplier CRAFTING = ControlifyBindApi.get().registerBinding(builder -> builder
+            .id("controlify", "crafting")
+            .category(INVENTORY_CATEGORY)
+            .allowedContexts(BindContext.IN_GAME));
     public static final InputBindingSupplier INV_SELECT = ControlifyBindApi.get().registerBinding(builder -> builder
             .id("controlify", "inv_select")
             .category(INVENTORY_CATEGORY)

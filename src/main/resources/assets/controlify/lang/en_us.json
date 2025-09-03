@@ -273,6 +273,7 @@
   "controlify.binding.controlify.hotbar_item_select_radial": "Hotbar Slot Select Radial",
   "controlify.binding.controlify.pause": "Pause Game",
   "controlify.binding.controlify.inventory": "Open Inventory",
+  "controlify.binding.controlify.crafting": "Open Crafting",
   "controlify.binding.controlify.change_perspective": "Change Perspective",
   "controlify.binding.controlify.swap_hands": "Swap Hands",
   "controlify.binding.controlify.open_chat": "Open Chat",
@@ -438,6 +439,7 @@
   "controlify.custom_binding.vanilla_description": "Automatically generated key binding from Fabric API.",
 
   "controlify.guide.ingame.inventory": "Open Inventory",
+  "controlify.guide.ingame.crafting": "Open Crafting",
   "controlify.guide.ingame.swim_up": "Swim Up",
   "controlify.guide.ingame.start_elytra": "Open Elytra Wings",
   "controlify.guide.ingame.fly_up": "Fly Up",

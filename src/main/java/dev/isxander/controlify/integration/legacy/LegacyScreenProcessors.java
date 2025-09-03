@@ -1,7 +1,7 @@
 package dev.isxander.controlify.integration.legacy;
 
 import dev.isxander.controlify.screenop.ScreenProcessorFactory;
-import dev.isxander.controlify.screenop.compat.legacy.LegacyCraftingScreenProcessor;
+import dev.isxander.controlify.screenop.compat.legacy.LegacyNoMouseScreenProcessor;
 import dev.isxander.controlify.screenop.compat.legacy.LegacyScreenTabProcessor;
 import dev.isxander.controlify.utils.CUtil;
 
@@ -24,15 +24,18 @@ public class LegacyScreenProcessors {
         try {
             // Register a single generic processor for all known Legacy screens
             ScreenProcessorFactory.registerProvider(PlayGameScreen.class, LegacyScreenTabProcessor::new);
-            ScreenProcessorFactory.registerProvider(LegacyCraftingScreen.class, LegacyCraftingScreenProcessor::new);
             ScreenProcessorFactory.registerProvider(PanelVListScreen.class, LegacyScreenTabProcessor::new);
-            ScreenProcessorFactory.registerProvider(LegacyLoomScreen.class, LegacyScreenProcessor::new);
-            ScreenProcessorFactory.registerProvider(LegacyStonecutterScreen.class, LegacyScreenProcessor::new);
+
+            ScreenProcessorFactory.registerProvider(LegacyCraftingScreen.class, LegacyNoMouseScreenProcessor::new);
+            ScreenProcessorFactory.registerProvider(LegacyLoomScreen.class, LegacyNoMouseScreenProcessor::new);
+            ScreenProcessorFactory.registerProvider(LegacyMerchantScreen.class, LegacyNoMouseScreenProcessor::new);
+            ScreenProcessorFactory.registerProvider(LegacyLoomScreen.class, LegacyNoMouseScreenProcessor::new);
+            ScreenProcessorFactory.registerProvider(LegacyStonecutterScreen.class, LegacyNoMouseScreenProcessor::new);
+
             ScreenProcessorFactory.registerProvider(MixedCraftingScreen.class,  LegacyScreenTabProcessor::new);
-            ScreenProcessorFactory.registerProvider(LegacyMerchantScreen.class, LegacyScreenProcessor::new);
             ScreenProcessorFactory.registerProvider(CreativeModeScreen.class, LegacyScreenTabProcessor::new);
+
             ScreenProcessorFactory.registerProvider(CreateWorldScreen.class, LegacyScreenProcessor::new);
-            ScreenProcessorFactory.registerProvider(InventoryScreen.class, LegacyScreenProcessor::new);
 
             CUtil.LOGGER.log("[Legacy4J] Registered generic LegacyScreenProcessorss for Legacy screens");
         } catch (Throwable t) {
