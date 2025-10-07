@@ -6,9 +6,12 @@ import dev.isxander.controlify.controller.ControllerEntity;
 import dev.isxander.controlify.controller.input.ControllerStateView;
 import dev.isxander.controlify.controller.input.GamepadInputs;
 import dev.isxander.controlify.controller.input.InputComponent;
+import dev.isxander.controlify.mixins.feature.screenop.ScreenAccessor;
 import dev.isxander.controlify.screenop.ScreenProcessor;
 import dev.isxander.controlify.utils.CUtil;
 import dev.isxander.controlify.virtualmouse.VirtualMouseBehaviour;
+import net.minecraft.client.gui.ComponentPath;
+import net.minecraft.client.gui.navigation.ScreenDirection;
 import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -17,8 +20,11 @@ import net.minecraft.client.gui.screens.Screen;
  * This avoids double-handling (Controlify focus navigation + Legacy handling).
  */
 public class LegacyScreenProcessor<T extends Screen> extends ScreenProcessor<T> {
+
+    protected boolean initialFocusSet;
     public LegacyScreenProcessor(T screen) {
         super(screen);
+        this.initialFocusSet = false;
     }
 
     @Override
@@ -29,8 +35,12 @@ public class LegacyScreenProcessor<T extends Screen> extends ScreenProcessor<T> 
 
     @Override
     public void setInitialFocus() {
-        // No-op: let Legacy4J manage focus entirely.
+        if(initialFocusSet) return;
+        holdRepeatHelper.reset();
+        super.setInitialFocus();
+        initialFocusSet = true;
     }
+
     @Override
     public void onControllerUpdate(ControllerEntity controller) {
         Controlify.instance().virtualMouseHandler().handleControllerInput(controller);
